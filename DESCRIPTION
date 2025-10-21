@@ -38,19 +38,22 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-Suggests: testthat (>= 3.0.0), tibble, dbplyr (>= 2.2.1), withr, duckdb
-        (>= 0.4.0), DBI (>= 1.1.0)
-Imports: dplyr (>= 1.0.9), data.table (>= 1.13.0), rlang (>= 1.0.2),
-        lubridate (>= 1.8.0), purrr, lifecycle, igraph (>= 1.5.1)
+Suggests:
+  testthat (>= 3.0.0),
+  tibble,
+  dbplyr (>= 2.2.1),
+  withr,
+  duckdb (>= 0.4.0),
+  DBI (>= 1.1.0)
+Imports:
+  dplyr (>= 1.0.9),
+  data.table (>= 1.13.0),
+  rlang (>= 1.0.2),
+  lubridate (>= 1.8.0),
+  purrr,
+  lifecycle,
+  igraph (>= 1.5.1)
 Depends: R (>= 2.10)
 License: MIT + file LICENSE
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2023-11-12 23:50:01 UTC; 60202401
-Author: Ian Powell [aut],
-  Zhisheng Sa [aut],
-  Branislav Igic [ctb],
-  Maria Alfaro-Ramirez [ctb],
-  Michael Nelson [rev, ctb, cre],
-  State of New South Wales NSW Ministry of Health [cph]
-Maintainer: Michael Nelson <Michael.Nelson1@health.nsw.gov.au>
