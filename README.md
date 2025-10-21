@@ -4,6 +4,7 @@
 # journeyer
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 The goal of `journeyer` is to provide flexible strategies to follow
@@ -36,35 +37,63 @@ dictionary](https://www.cherel.org.au/data-dictionaries).
 
 ``` r
 library(dplyr) # For data manipulation
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
 library(data.table)
+#> 
+#> Attaching package: 'data.table'
+#> The following objects are masked from 'package:dplyr':
+#> 
+#>     between, first, last
 
 library(journeyer)
 
 data(toy_apdc)
 head(toy_apdc, 10L)
-#>                                RL_ID   PPN source_of_referral_recode mode_of_separation_recode
-#>  1: b2cd17b85f89befacfdc89a194bc6b64  3411                        07                         1
-#>  2: 9a1426d5bc9a7232fdcf7fcc1ed3ce73  3411                        07                         1
-#>  3: 8f337886bb80377c4129fa4a708e163f 14729                        07                         1
-#>  4: 33915b935904e38e7299cd3d4e040682  9801                        07                         1
-#>  5: a0db5e74832b16a26b20052088e5c8bd   663                        07                         1
-#>  6: 69cbaaabc925e7714c346b3718bd3856  5579                        07                         1
-#>  7: cf63e6bc809ff6240852c470a931151f  6350                        07                         1
-#>  8: 79e219a17878df547879fb8d2b53df1c  1211                        01                         5
-#>  9: c45a57a0547971c9e6e0f10f3de9861c  1211                        04                         1
-#> 10: e03e795af41aca093831c1fe7cc8a095 16955                        07                         1
-#>           episode_start         episode_end facility_identifier_recode facility_trans_from_recode
-#>  1: 2001-07-20 01:05:55 2001-07-20 06:20:55                          A                       <NA>
-#>  2: 2001-07-20 01:21:55 2001-07-20 06:20:55                          B                       <NA>
-#>  3: 2012-03-27 13:47:51 2012-03-27 22:57:51                          A                       <NA>
-#>  4: 2010-09-23 19:48:55 2010-09-25 01:03:55                          A                       <NA>
-#>  5: 2019-11-11 07:56:24 2019-11-11 14:22:24                          A                       <NA>
-#>  6: 2022-08-17 20:51:36 2022-08-18 00:51:36                          A                       <NA>
-#>  7: 2015-10-31 19:44:48 2015-10-31 20:24:48                          A                       <NA>
-#>  8: 2019-12-16 09:11:22 2019-12-19 03:02:22                          A                       <NA>
-#>  9: 2019-12-19 04:02:22 2019-12-20 07:35:22                          B                          A
-#> 10: 2008-06-27 15:11:27 2008-06-27 19:51:27                          A                       <NA>
+#>                                RL_ID   PPN source_of_referral_recode
+#>                               <hash> <int>                    <char>
+#>  1: b2cd17b85f89befacfdc89a194bc6b64  3411                        07
+#>  2: 9a1426d5bc9a7232fdcf7fcc1ed3ce73  3411                        07
+#>  3: 8f337886bb80377c4129fa4a708e163f 14729                        07
+#>  4: 33915b935904e38e7299cd3d4e040682  9801                        07
+#>  5: a0db5e74832b16a26b20052088e5c8bd   663                        07
+#>  6: 69cbaaabc925e7714c346b3718bd3856  5579                        07
+#>  7: cf63e6bc809ff6240852c470a931151f  6350                        07
+#>  8: 79e219a17878df547879fb8d2b53df1c  1211                        01
+#>  9: c45a57a0547971c9e6e0f10f3de9861c  1211                        04
+#> 10: e03e795af41aca093831c1fe7cc8a095 16955                        07
+#>     mode_of_separation_recode       episode_start         episode_end
+#>                        <char>              <POSc>              <POSc>
+#>  1:                         1 2001-07-20 01:05:55 2001-07-20 06:20:55
+#>  2:                         1 2001-07-20 01:21:55 2001-07-20 06:20:55
+#>  3:                         1 2012-03-27 13:47:51 2012-03-27 22:57:51
+#>  4:                         1 2010-09-23 19:48:55 2010-09-25 01:03:55
+#>  5:                         1 2019-11-11 07:56:24 2019-11-11 14:22:24
+#>  6:                         1 2022-08-17 20:51:36 2022-08-18 00:51:36
+#>  7:                         1 2015-10-31 19:44:48 2015-10-31 20:24:48
+#>  8:                         5 2019-12-16 09:11:22 2019-12-19 03:02:22
+#>  9:                         1 2019-12-19 04:02:22 2019-12-20 07:35:22
+#> 10:                         1 2008-06-27 15:11:27 2008-06-27 19:51:27
+#>     facility_identifier_recode facility_trans_from_recode
+#>                         <char>                     <char>
+#>  1:                          A                       <NA>
+#>  2:                          B                       <NA>
+#>  3:                          A                       <NA>
+#>  4:                          A                       <NA>
+#>  5:                          A                       <NA>
+#>  6:                          A                       <NA>
+#>  7:                          A                       <NA>
+#>  8:                          A                       <NA>
+#>  9:                          B                          A
+#> 10:                          A                       <NA>
 #>     facility_trans_to_recode
+#>                       <char>
 #>  1:                     <NA>
 #>  2:                     <NA>
 #>  3:                     <NA>
@@ -84,8 +113,13 @@ the suffixes to resolve name collisions should be `_parent` and
 `_child`.
 
 ``` r
-pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN', suffix = c('_parent', '_child')) %>%
+pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN', suffix = c('_parent', '_child')) |>
   filter(RL_ID_parent != RL_ID_child)
+#> Warning in inner_join(toy_apdc, toy_apdc, by = "PPN", suffix = c("_parent", : Detected an unexpected many-to-many relationship between `x` and `y`.
+#> ℹ Row 1 of `x` matches multiple rows in `y`.
+#> ℹ Row 1 of `y` matches multiple rows in `x`.
+#> ℹ If a many-to-many relationship is expected, set `relationship =
+#>   "many-to-many"` to silence this warning.
 ```
 
 Now that the pairs are lined up side-by-side, we can use the default
@@ -93,12 +127,13 @@ predicates for the NSW APDC as they are present in the package. For
 convenience, we keep only the identifier columns.
 
 ``` r
-links <- pairs %>%
-  find_links(!!!default_predicates$NSW$APDC_APDC) %>%
+links <- pairs |>
+  find_links(!!!default_predicates$NSW$APDC_APDC) |>
   select(RL_ID_parent, RL_ID_child)
 
 head(links)
 #>                        RL_ID_parent                      RL_ID_child
+#>                              <hash>                           <hash>
 #> 1: b2cd17b85f89befacfdc89a194bc6b64 9a1426d5bc9a7232fdcf7fcc1ed3ce73
 #> 2: 79e219a17878df547879fb8d2b53df1c c45a57a0547971c9e6e0f10f3de9861c
 #> 3: d7265e4a40c784680bf62aae4415dbc0 c7e865d78c9ea18a62a5dc5bdba36621
@@ -115,29 +150,44 @@ setDT(toy_apdc)
 collect_journeys(toy_apdc, links, identifier = 'RL_ID')
 
 head(toy_apdc, 10L)
-#>                                RL_ID   PPN source_of_referral_recode mode_of_separation_recode
-#>  1: b2cd17b85f89befacfdc89a194bc6b64  3411                        07                         1
-#>  2: 9a1426d5bc9a7232fdcf7fcc1ed3ce73  3411                        07                         1
-#>  3: 8f337886bb80377c4129fa4a708e163f 14729                        07                         1
-#>  4: 33915b935904e38e7299cd3d4e040682  9801                        07                         1
-#>  5: a0db5e74832b16a26b20052088e5c8bd   663                        07                         1
-#>  6: 69cbaaabc925e7714c346b3718bd3856  5579                        07                         1
-#>  7: cf63e6bc809ff6240852c470a931151f  6350                        07                         1
-#>  8: 79e219a17878df547879fb8d2b53df1c  1211                        01                         5
-#>  9: c45a57a0547971c9e6e0f10f3de9861c  1211                        04                         1
-#> 10: e03e795af41aca093831c1fe7cc8a095 16955                        07                         1
-#>           episode_start         episode_end facility_identifier_recode facility_trans_from_recode
-#>  1: 2001-07-20 01:05:55 2001-07-20 06:20:55                          A                       <NA>
-#>  2: 2001-07-20 01:21:55 2001-07-20 06:20:55                          B                       <NA>
-#>  3: 2012-03-27 13:47:51 2012-03-27 22:57:51                          A                       <NA>
-#>  4: 2010-09-23 19:48:55 2010-09-25 01:03:55                          A                       <NA>
-#>  5: 2019-11-11 07:56:24 2019-11-11 14:22:24                          A                       <NA>
-#>  6: 2022-08-17 20:51:36 2022-08-18 00:51:36                          A                       <NA>
-#>  7: 2015-10-31 19:44:48 2015-10-31 20:24:48                          A                       <NA>
-#>  8: 2019-12-16 09:11:22 2019-12-19 03:02:22                          A                       <NA>
-#>  9: 2019-12-19 04:02:22 2019-12-20 07:35:22                          B                          A
-#> 10: 2008-06-27 15:11:27 2008-06-27 19:51:27                          A                       <NA>
+#>                                RL_ID   PPN source_of_referral_recode
+#>                               <hash> <int>                    <char>
+#>  1: b2cd17b85f89befacfdc89a194bc6b64  3411                        07
+#>  2: 9a1426d5bc9a7232fdcf7fcc1ed3ce73  3411                        07
+#>  3: 8f337886bb80377c4129fa4a708e163f 14729                        07
+#>  4: 33915b935904e38e7299cd3d4e040682  9801                        07
+#>  5: a0db5e74832b16a26b20052088e5c8bd   663                        07
+#>  6: 69cbaaabc925e7714c346b3718bd3856  5579                        07
+#>  7: cf63e6bc809ff6240852c470a931151f  6350                        07
+#>  8: 79e219a17878df547879fb8d2b53df1c  1211                        01
+#>  9: c45a57a0547971c9e6e0f10f3de9861c  1211                        04
+#> 10: e03e795af41aca093831c1fe7cc8a095 16955                        07
+#>     mode_of_separation_recode       episode_start         episode_end
+#>                        <char>              <POSc>              <POSc>
+#>  1:                         1 2001-07-20 01:05:55 2001-07-20 06:20:55
+#>  2:                         1 2001-07-20 01:21:55 2001-07-20 06:20:55
+#>  3:                         1 2012-03-27 13:47:51 2012-03-27 22:57:51
+#>  4:                         1 2010-09-23 19:48:55 2010-09-25 01:03:55
+#>  5:                         1 2019-11-11 07:56:24 2019-11-11 14:22:24
+#>  6:                         1 2022-08-17 20:51:36 2022-08-18 00:51:36
+#>  7:                         1 2015-10-31 19:44:48 2015-10-31 20:24:48
+#>  8:                         5 2019-12-16 09:11:22 2019-12-19 03:02:22
+#>  9:                         1 2019-12-19 04:02:22 2019-12-20 07:35:22
+#> 10:                         1 2008-06-27 15:11:27 2008-06-27 19:51:27
+#>     facility_identifier_recode facility_trans_from_recode
+#>                         <char>                     <char>
+#>  1:                          A                       <NA>
+#>  2:                          B                       <NA>
+#>  3:                          A                       <NA>
+#>  4:                          A                       <NA>
+#>  5:                          A                       <NA>
+#>  6:                          A                       <NA>
+#>  7:                          A                       <NA>
+#>  8:                          A                       <NA>
+#>  9:                          B                          A
+#> 10:                          A                       <NA>
 #>     facility_trans_to_recode journey
+#>                       <char>   <int>
 #>  1:                     <NA>       1
 #>  2:                     <NA>       1
 #>  3:                     <NA>       2
@@ -162,13 +212,14 @@ episodes in each POHC:
 
 ``` r
 head(toy_apdc[, .(start = min(episode_start), end = max(episode_end), Neps = .N), by = 'journey'])
-#>    journey               start                 end Neps
-#> 1:       1 2001-07-20 01:05:55 2001-07-20 06:20:55    2
-#> 2:       2 2012-03-27 13:47:51 2012-03-27 22:57:51    1
-#> 3:       3 2010-09-23 19:48:55 2010-09-25 01:03:55    1
-#> 4:       4 2019-11-11 07:56:24 2019-11-11 14:22:24    1
-#> 5:       5 2022-08-17 20:51:36 2022-08-18 00:51:36    1
-#> 6:       6 2015-10-31 19:44:48 2015-10-31 20:24:48    1
+#>    journey               start                 end  Neps
+#>      <int>              <POSc>              <POSc> <int>
+#> 1:       1 2001-07-20 01:05:55 2001-07-20 06:20:55     2
+#> 2:       2 2012-03-27 13:47:51 2012-03-27 22:57:51     1
+#> 3:       3 2010-09-23 19:48:55 2010-09-25 01:03:55     1
+#> 4:       4 2019-11-11 07:56:24 2019-11-11 14:22:24     1
+#> 5:       5 2022-08-17 20:51:36 2022-08-18 00:51:36     1
+#> 6:       6 2015-10-31 19:44:48 2015-10-31 20:24:48     1
 ```
 
 A researcher may also calculate summary information for each POHC, such
@@ -180,7 +231,9 @@ Most POHCs have just one episode, which is similar to the NSW APDC:
 
 ``` r
 toy_apdc[, .("Episodes in POHC" = .N), by = 'journey'][, .(POHCs = .N), keyby = 'Episodes in POHC']
+#> Key: <Episodes in POHC>
 #>    Episodes in POHC POHCs
+#>               <int> <int>
 #> 1:                1 20269
 #> 2:                2   730
 #> 3:                3    33
@@ -195,38 +248,58 @@ let us consider a simple example where episodes are considered linked if
 and only if they overlap. We could find these links as follows.
 
 ``` r
-pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN', suffix = c('_parent', '_child')) %>%
+pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN', suffix = c('_parent', '_child')) |>
   filter(RL_ID_parent != RL_ID_child)
+#> Warning in inner_join(toy_apdc, toy_apdc, by = "PPN", suffix = c("_parent", : Detected an unexpected many-to-many relationship between `x` and `y`.
+#> ℹ Row 1 of `x` matches multiple rows in `y`.
+#> ℹ Row 1 of `y` matches multiple rows in `x`.
+#> ℹ If a many-to-many relationship is expected, set `relationship =
+#>   "many-to-many"` to silence this warning.
 
-links <- pairs %>%
-  find_links(episode_start_parent <= episode_start_child & episode_start_child <= episode_end_parent) %>%
+links <- pairs |>
+  find_links(episode_start_parent <= episode_start_child & episode_start_child <= episode_end_parent) |>
   select(RL_ID_parent, RL_ID_child)
 
 collect_journeys(toy_apdc, links, identifier = "RL_ID")
 head(toy_apdc, 10L)
-#>                                RL_ID   PPN source_of_referral_recode mode_of_separation_recode
-#>  1: b2cd17b85f89befacfdc89a194bc6b64  3411                        07                         1
-#>  2: 9a1426d5bc9a7232fdcf7fcc1ed3ce73  3411                        07                         1
-#>  3: 8f337886bb80377c4129fa4a708e163f 14729                        07                         1
-#>  4: 33915b935904e38e7299cd3d4e040682  9801                        07                         1
-#>  5: a0db5e74832b16a26b20052088e5c8bd   663                        07                         1
-#>  6: 69cbaaabc925e7714c346b3718bd3856  5579                        07                         1
-#>  7: cf63e6bc809ff6240852c470a931151f  6350                        07                         1
-#>  8: 79e219a17878df547879fb8d2b53df1c  1211                        01                         5
-#>  9: c45a57a0547971c9e6e0f10f3de9861c  1211                        04                         1
-#> 10: e03e795af41aca093831c1fe7cc8a095 16955                        07                         1
-#>           episode_start         episode_end facility_identifier_recode facility_trans_from_recode
-#>  1: 2001-07-20 01:05:55 2001-07-20 06:20:55                          A                       <NA>
-#>  2: 2001-07-20 01:21:55 2001-07-20 06:20:55                          B                       <NA>
-#>  3: 2012-03-27 13:47:51 2012-03-27 22:57:51                          A                       <NA>
-#>  4: 2010-09-23 19:48:55 2010-09-25 01:03:55                          A                       <NA>
-#>  5: 2019-11-11 07:56:24 2019-11-11 14:22:24                          A                       <NA>
-#>  6: 2022-08-17 20:51:36 2022-08-18 00:51:36                          A                       <NA>
-#>  7: 2015-10-31 19:44:48 2015-10-31 20:24:48                          A                       <NA>
-#>  8: 2019-12-16 09:11:22 2019-12-19 03:02:22                          A                       <NA>
-#>  9: 2019-12-19 04:02:22 2019-12-20 07:35:22                          B                          A
-#> 10: 2008-06-27 15:11:27 2008-06-27 19:51:27                          A                       <NA>
+#>                                RL_ID   PPN source_of_referral_recode
+#>                               <hash> <int>                    <char>
+#>  1: b2cd17b85f89befacfdc89a194bc6b64  3411                        07
+#>  2: 9a1426d5bc9a7232fdcf7fcc1ed3ce73  3411                        07
+#>  3: 8f337886bb80377c4129fa4a708e163f 14729                        07
+#>  4: 33915b935904e38e7299cd3d4e040682  9801                        07
+#>  5: a0db5e74832b16a26b20052088e5c8bd   663                        07
+#>  6: 69cbaaabc925e7714c346b3718bd3856  5579                        07
+#>  7: cf63e6bc809ff6240852c470a931151f  6350                        07
+#>  8: 79e219a17878df547879fb8d2b53df1c  1211                        01
+#>  9: c45a57a0547971c9e6e0f10f3de9861c  1211                        04
+#> 10: e03e795af41aca093831c1fe7cc8a095 16955                        07
+#>     mode_of_separation_recode       episode_start         episode_end
+#>                        <char>              <POSc>              <POSc>
+#>  1:                         1 2001-07-20 01:05:55 2001-07-20 06:20:55
+#>  2:                         1 2001-07-20 01:21:55 2001-07-20 06:20:55
+#>  3:                         1 2012-03-27 13:47:51 2012-03-27 22:57:51
+#>  4:                         1 2010-09-23 19:48:55 2010-09-25 01:03:55
+#>  5:                         1 2019-11-11 07:56:24 2019-11-11 14:22:24
+#>  6:                         1 2022-08-17 20:51:36 2022-08-18 00:51:36
+#>  7:                         1 2015-10-31 19:44:48 2015-10-31 20:24:48
+#>  8:                         5 2019-12-16 09:11:22 2019-12-19 03:02:22
+#>  9:                         1 2019-12-19 04:02:22 2019-12-20 07:35:22
+#> 10:                         1 2008-06-27 15:11:27 2008-06-27 19:51:27
+#>     facility_identifier_recode facility_trans_from_recode
+#>                         <char>                     <char>
+#>  1:                          A                       <NA>
+#>  2:                          B                       <NA>
+#>  3:                          A                       <NA>
+#>  4:                          A                       <NA>
+#>  5:                          A                       <NA>
+#>  6:                          A                       <NA>
+#>  7:                          A                       <NA>
+#>  8:                          A                       <NA>
+#>  9:                          B                          A
+#> 10:                          A                       <NA>
 #>     facility_trans_to_recode journey
+#>                       <char>   <int>
 #>  1:                     <NA>       1
 #>  2:                     <NA>       1
 #>  3:                     <NA>       2
@@ -250,7 +323,7 @@ transfers where both source and destination episode have evidence of a
 transfer, or overlapping episodes, we could do:
 
 ``` r
-links <- pairs %>%
+links <- pairs |>
   find_links(
     overlap = !!overlap_episodes(episode_start_parent, episode_end_parent, episode_start_child),
     transfer = !!transfers_both(
@@ -259,34 +332,49 @@ links <- pairs %>%
       episode_start_child, source_of_referral_recode_child,
       facility_identifier_recode_child, facility_trans_from_recode_child
     )
-  ) %>%
+  ) |>
   select(RL_ID_parent, RL_ID_child)
 
 collect_journeys(toy_apdc, links, identifier = "RL_ID")
 head(toy_apdc, 10L)
-#>                                RL_ID   PPN source_of_referral_recode mode_of_separation_recode
-#>  1: b2cd17b85f89befacfdc89a194bc6b64  3411                        07                         1
-#>  2: 9a1426d5bc9a7232fdcf7fcc1ed3ce73  3411                        07                         1
-#>  3: 8f337886bb80377c4129fa4a708e163f 14729                        07                         1
-#>  4: 33915b935904e38e7299cd3d4e040682  9801                        07                         1
-#>  5: a0db5e74832b16a26b20052088e5c8bd   663                        07                         1
-#>  6: 69cbaaabc925e7714c346b3718bd3856  5579                        07                         1
-#>  7: cf63e6bc809ff6240852c470a931151f  6350                        07                         1
-#>  8: 79e219a17878df547879fb8d2b53df1c  1211                        01                         5
-#>  9: c45a57a0547971c9e6e0f10f3de9861c  1211                        04                         1
-#> 10: e03e795af41aca093831c1fe7cc8a095 16955                        07                         1
-#>           episode_start         episode_end facility_identifier_recode facility_trans_from_recode
-#>  1: 2001-07-20 01:05:55 2001-07-20 06:20:55                          A                       <NA>
-#>  2: 2001-07-20 01:21:55 2001-07-20 06:20:55                          B                       <NA>
-#>  3: 2012-03-27 13:47:51 2012-03-27 22:57:51                          A                       <NA>
-#>  4: 2010-09-23 19:48:55 2010-09-25 01:03:55                          A                       <NA>
-#>  5: 2019-11-11 07:56:24 2019-11-11 14:22:24                          A                       <NA>
-#>  6: 2022-08-17 20:51:36 2022-08-18 00:51:36                          A                       <NA>
-#>  7: 2015-10-31 19:44:48 2015-10-31 20:24:48                          A                       <NA>
-#>  8: 2019-12-16 09:11:22 2019-12-19 03:02:22                          A                       <NA>
-#>  9: 2019-12-19 04:02:22 2019-12-20 07:35:22                          B                          A
-#> 10: 2008-06-27 15:11:27 2008-06-27 19:51:27                          A                       <NA>
+#>                                RL_ID   PPN source_of_referral_recode
+#>                               <hash> <int>                    <char>
+#>  1: b2cd17b85f89befacfdc89a194bc6b64  3411                        07
+#>  2: 9a1426d5bc9a7232fdcf7fcc1ed3ce73  3411                        07
+#>  3: 8f337886bb80377c4129fa4a708e163f 14729                        07
+#>  4: 33915b935904e38e7299cd3d4e040682  9801                        07
+#>  5: a0db5e74832b16a26b20052088e5c8bd   663                        07
+#>  6: 69cbaaabc925e7714c346b3718bd3856  5579                        07
+#>  7: cf63e6bc809ff6240852c470a931151f  6350                        07
+#>  8: 79e219a17878df547879fb8d2b53df1c  1211                        01
+#>  9: c45a57a0547971c9e6e0f10f3de9861c  1211                        04
+#> 10: e03e795af41aca093831c1fe7cc8a095 16955                        07
+#>     mode_of_separation_recode       episode_start         episode_end
+#>                        <char>              <POSc>              <POSc>
+#>  1:                         1 2001-07-20 01:05:55 2001-07-20 06:20:55
+#>  2:                         1 2001-07-20 01:21:55 2001-07-20 06:20:55
+#>  3:                         1 2012-03-27 13:47:51 2012-03-27 22:57:51
+#>  4:                         1 2010-09-23 19:48:55 2010-09-25 01:03:55
+#>  5:                         1 2019-11-11 07:56:24 2019-11-11 14:22:24
+#>  6:                         1 2022-08-17 20:51:36 2022-08-18 00:51:36
+#>  7:                         1 2015-10-31 19:44:48 2015-10-31 20:24:48
+#>  8:                         5 2019-12-16 09:11:22 2019-12-19 03:02:22
+#>  9:                         1 2019-12-19 04:02:22 2019-12-20 07:35:22
+#> 10:                         1 2008-06-27 15:11:27 2008-06-27 19:51:27
+#>     facility_identifier_recode facility_trans_from_recode
+#>                         <char>                     <char>
+#>  1:                          A                       <NA>
+#>  2:                          B                       <NA>
+#>  3:                          A                       <NA>
+#>  4:                          A                       <NA>
+#>  5:                          A                       <NA>
+#>  6:                          A                       <NA>
+#>  7:                          A                       <NA>
+#>  8:                          A                       <NA>
+#>  9:                          B                          A
+#> 10:                          A                       <NA>
 #>     facility_trans_to_recode journey
+#>                       <char>   <int>
 #>  1:                     <NA>       1
 #>  2:                     <NA>       1
 #>  3:                     <NA>       2
@@ -310,7 +398,13 @@ using the `duckdb` package, an in-process OLAP system:
 
 ``` r
 library(duckdb)
+#> Loading required package: DBI
 library(dbplyr)
+#> 
+#> Attaching package: 'dbplyr'
+#> The following objects are masked from 'package:dplyr':
+#> 
+#>     ident, sql
 
 con <- dbConnect(duckdb(), timezone_out = '', tz_out_convert = 'force')
 
@@ -318,22 +412,23 @@ con <- dbConnect(duckdb(), timezone_out = '', tz_out_convert = 'force')
 duckdb_register(con, 'toy_apdc', toy_apdc)
 toydata <- tbl(con, 'toy_apdc')
 
-pairs <- inner_join(toydata, toydata, by = 'PPN', suffix = c('_parent', '_child')) %>%
+pairs <- inner_join(toydata, toydata, by = 'PPN', suffix = c('_parent', '_child')) |>
   filter(RL_ID_parent != RL_ID_child)
 
-links <- pairs %>%
-  find_links(!!!default_predicates$NSW$APDC_APDC) %>%
-  select(RL_ID_parent, RL_ID_child) %>%
+links <- pairs |>
+  find_links(!!!default_predicates$NSW$APDC_APDC) |>
+  select(RL_ID_parent, RL_ID_child) |>
   collect() # Tell dbplyr to run the query
 
-toyids <- toydata %>%
-  select(RL_ID) %>%
+toyids <- toydata |>
+  select(RL_ID) |>
   collect()
 setDT(toyids)
 
 collect_journeys(toyids, links, identifier = 'RL_ID')
 head(toyids, 10L)
 #>                                RL_ID journey
+#>                               <char>   <int>
 #>  1: b2cd17b85f89befacfdc89a194bc6b64       1
 #>  2: 9a1426d5bc9a7232fdcf7fcc1ed3ce73       1
 #>  3: 8f337886bb80377c4129fa4a708e163f       2

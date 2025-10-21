@@ -1,0 +1,202 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# journeyer
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of `journeyer` is to provide flexible strategies to follow
+patient journeys through administrative data from NSW Health. The
+simplest administrative patient journey is the *period of hospital care*
+(POHC), which aims to capture all episodes of care in a hospitalisation
+from the time a patient is admitted to when they are formally
+discharged.
+
+## Installation
+
+You can install the development version of `journeyer` from the tarball
+like so:
+
+```r
+install.packages('/path/to/journeyer_0.x.x.tar.gz', repos = NULL)
+```
+
+## Example
+
+The following presents an example of how the `journeyer` package should
+be used. This uses an artificial dataset that mimics some of the
+patterns found in the NSW APDC. The toy APDC dataset contains 21,892
+records and 9 variables. `RL_ID` is a unique record identifier, while
+`PPN` is a person identifier. The facility columns all represent the
+first mentioned facility for a person by A, the second by B, and so on.
+The source of referral and mode of separation columns use codes as
+defined in the [NSW APDC data
+dictionary](https://www.cherel.org.au/data-dictionaries).
+
+```{r}
+library(dplyr) # For data manipulation
+library(data.table)
+
+library(journeyer)
+
+data(toy_apdc)
+head(toy_apdc, 10L)
+```
+
+Using this data we have read in, we now find links between these
+episodes. To start, we need to join the dataset to itself using the PPN
+column, and filter out pairs relating to the same record. By convention,
+the suffixes to resolve name collisions should be `_parent` and
+`_child`.
+
+```{r}
+pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN', suffix = c('_parent', '_child')) |>
+  filter(RL_ID_parent != RL_ID_child)
+```
+
+Now that the pairs are lined up side-by-side, we can use the default
+predicates for the NSW APDC as they are present in the package. For
+convenience, we keep only the identifier columns.
+
+```{r}
+links <- pairs |>
+  find_links(!!!default_predicates$NSW$APDC_APDC) |>
+  select(RL_ID_parent, RL_ID_child)
+
+head(links)
+```
+
+Now, we load on a new `journey` column onto the toy data, which requires
+the toy data to be in `data.table` format.
+
+```{r}
+setDT(toy_apdc)
+collect_journeys(toy_apdc, links, identifier = 'RL_ID')
+
+head(toy_apdc, 10L)
+```
+
+Now, we can count the number of POHCs in the toy data:
+
+```{r}
+toy_apdc[, uniqueN(journey)]
+```
+
+We can find the start and end of each POHC, and count the number of
+episodes in each POHC:
+
+```{r}
+head(toy_apdc[, .(start = min(episode_start), end = max(episode_end), Neps = .N), by = 'journey'])
+```
+
+A researcher may also calculate summary information for each POHC, such
+as first primary procedure, the presence of certain diagnosis codes, and
+demographic information. However, this data manipulation is beyond the
+scope of this README.
+
+Most POHCs have just one episode, which is similar to the NSW APDC:
+
+```{r}
+toy_apdc[, .("Episodes in POHC" = .N), by = 'journey'][, .(POHCs = .N), keyby = 'Episodes in POHC']
+```
+
+## Using different predicates
+
+The above example uses default predicates which are coded in the
+`journeyer` package. However, different predicates can be used! First,
+let us consider a simple example where episodes are considered linked if
+and only if they overlap. We could find these links as follows.
+
+```{r}
+pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN', suffix = c('_parent', '_child')) |>
+  filter(RL_ID_parent != RL_ID_child)
+
+links <- pairs |>
+  find_links(episode_start_parent <= episode_start_child & episode_start_child <= episode_end_parent) |>
+  select(RL_ID_parent, RL_ID_child)
+
+collect_journeys(toy_apdc, links, identifier = "RL_ID")
+head(toy_apdc, 10L)
+```
+
+Here, we have used the fact that if two episodes overlap, then one
+episode starts during the other.
+
+Some of the common types of links have been implemented as functions in
+the `journeyer` package. For a complete list of these predicates, see
+`?LinkPredicates`. To use these, note that you will need to use the
+bang-bang operator `!!` from the tidyverse. For example, to find
+transfers where both source and destination episode have evidence of a
+transfer, or overlapping episodes, we could do:
+
+```{r}
+links <- pairs |>
+  find_links(
+    overlap = !!overlap_episodes(episode_start_parent, episode_end_parent, episode_start_child),
+    transfer = !!transfers_both(
+      episode_end_parent, mode_of_separation_recode_parent,
+      facility_identifier_recode_parent, facility_trans_to_recode_parent,
+      episode_start_child, source_of_referral_recode_child,
+      facility_identifier_recode_child, facility_trans_from_recode_child
+    )
+  ) |>
+  select(RL_ID_parent, RL_ID_child)
+
+collect_journeys(toy_apdc, links, identifier = "RL_ID")
+head(toy_apdc, 10L)
+```
+
+## Using `dbplyr` to work with large datasets
+
+For large datasets, with many billions of pairs to check, a researcher
+may reasonably be concerned about system load while doing this with base
+R. Fortunately, the default predicates have been carefully constructed
+to interface with `dbplyr`, allowing the work to be done through a
+database management system with better resource management. For example,
+using the `duckdb` package, an in-process OLAP system:
+
+```{r}
+library(duckdb)
+library(dbplyr)
+
+con <- dbConnect(duckdb(), timezone_out = '', tz_out_convert = 'force')
+
+# Tell DuckDB to read the data frame from R; DuckDB can also read Parquet files
+duckdb_register(con, 'toy_apdc', toy_apdc)
+toydata <- tbl(con, 'toy_apdc')
+
+pairs <- inner_join(toydata, toydata, by = 'PPN', suffix = c('_parent', '_child')) |>
+  filter(RL_ID_parent != RL_ID_child)
+
+links <- pairs |>
+  find_links(!!!default_predicates$NSW$APDC_APDC) |>
+  select(RL_ID_parent, RL_ID_child) |>
+  collect() # Tell dbplyr to run the query
+
+toyids <- toydata |>
+  select(RL_ID) |>
+  collect()
+setDT(toyids)
+
+collect_journeys(toyids, links, identifier = 'RL_ID')
+head(toyids, 10L)
+
+on.exit(dbDisconnect(con, shutdown = TRUE), add = TRUE)
+```
+
+This table now contains the record identifier and the POHC number. It
+can be inserted back into or registered with the database to conduct
+further analyses.
