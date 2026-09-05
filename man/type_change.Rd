@@ -58,23 +58,23 @@ with a type change admission (TCA), and both episodes must be in the same
 facility.
 }
 \seealso{
-Other link predicates: 
+Other link predicates:
 \code{\link{LinkPredicates}},
-\code{\link{amb_arrival}()},
-\code{\link{amb_transfer_out}()},
-\code{\link{ap_from_ed_both}()},
-\code{\link{ap_from_ed_received}()},
-\code{\link{ap_from_ed_sent}()},
-\code{\link{ed_from_ap_sent}()},
-\code{\link{ed_transfers_received}()},
-\code{\link{ed_transfers_sent}()},
-\code{\link{find_links}()},
-\code{\link{overlap_episodes}()},
-\code{\link{overlap_presentations}()},
-\code{\link{sameday_transfer}()},
-\code{\link{samestart}()},
-\code{\link{transfers_both}()},
-\code{\link{transfers_in}()},
-\code{\link{transfers_out}()}
+\code{\link[=amb_arrival]{amb_arrival()}},
+\code{\link[=amb_transfer_out]{amb_transfer_out()}},
+\code{\link[=ap_from_ed_both]{ap_from_ed_both()}},
+\code{\link[=ap_from_ed_received]{ap_from_ed_received()}},
+\code{\link[=ap_from_ed_sent]{ap_from_ed_sent()}},
+\code{\link[=ed_from_ap_sent]{ed_from_ap_sent()}},
+\code{\link[=ed_transfers_received]{ed_transfers_received()}},
+\code{\link[=ed_transfers_sent]{ed_transfers_sent()}},
+\code{\link[=find_links]{find_links()}},
+\code{\link[=overlap_episodes]{overlap_episodes()}},
+\code{\link[=overlap_presentations]{overlap_presentations()}},
+\code{\link[=sameday_transfer]{sameday_transfer()}},
+\code{\link[=samestart]{samestart()}},
+\code{\link[=transfers_both]{transfers_both()}},
+\code{\link[=transfers_in]{transfers_in()}},
+\code{\link[=transfers_out]{transfers_out()}}
 }
 \concept{link predicates}
