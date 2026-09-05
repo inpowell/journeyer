@@ -28,11 +28,11 @@ discharged.
 
 ## Installation
 
-You can install the development version of `journeyer` from the tarball
-like so:
+You can install the development version of `journeyer` from GitHub using the
+`remotes` package:
 
 ```r
-install.packages('/path/to/journeyer_0.x.x.tar.gz', repos = NULL)
+remotes::install_github('inpowell/journeyer')
 ```
 
 ## Example
@@ -64,7 +64,9 @@ the suffixes to resolve name collisions should be `_parent` and
 `_child`.
 
 ```{r}
-pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN', suffix = c('_parent', '_child')) |>
+pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN',
+                    suffix = c('_parent', '_child'),
+                    relationship = 'many-to-many') |>
   filter(RL_ID_parent != RL_ID_child)
 ```
 
@@ -122,7 +124,9 @@ let us consider a simple example where episodes are considered linked if
 and only if they overlap. We could find these links as follows.
 
 ```{r}
-pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN', suffix = c('_parent', '_child')) |>
+pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN',
+                    suffix = c('_parent', '_child'),
+                    relationship = 'many-to-many') |>
   filter(RL_ID_parent != RL_ID_child)
 
 links <- pairs |>
@@ -173,7 +177,7 @@ using the `duckdb` package, an in-process OLAP system:
 library(duckdb)
 library(dbplyr)
 
-con <- dbConnect(duckdb(), timezone_out = '', tz_out_convert = 'force')
+con <- dbConnect(duckdb(shared_home = FALSE), timezone_out = '', tz_out_convert = 'force')
 
 # Tell DuckDB to read the data frame from R; DuckDB can also read Parquet files
 duckdb_register(con, 'toy_apdc', toy_apdc)

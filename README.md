@@ -17,11 +17,11 @@ discharged.
 
 ## Installation
 
-You can install the development version of `journeyer` from the tarball
-like so:
+You can install the development version of `journeyer` from GitHub using
+the `remotes` package:
 
 ``` r
-install.packages('/path/to/journeyer_0.x.x.tar.gz', repos = NULL)
+remotes::install_github('inpowell/journeyer')
 ```
 
 ## Example
@@ -117,13 +117,10 @@ the suffixes to resolve name collisions should be `_parent` and
 `_child`.
 
 ``` r
-pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN', suffix = c('_parent', '_child')) |>
+pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN',
+                    suffix = c('_parent', '_child'),
+                    relationship = 'many-to-many') |>
   filter(RL_ID_parent != RL_ID_child)
-#> Warning in inner_join(toy_apdc, toy_apdc, by = "PPN", suffix = c("_parent", : Detected an unexpected many-to-many relationship between `x` and `y`.
-#> ℹ Row 1 of `x` matches multiple rows in `y`.
-#> ℹ Row 1 of `y` matches multiple rows in `x`.
-#> ℹ If a many-to-many relationship is expected, set `relationship =
-#>   "many-to-many"` to silence this warning.
 ```
 
 Now that the pairs are lined up side-by-side, we can use the default
@@ -252,13 +249,10 @@ let us consider a simple example where episodes are considered linked if
 and only if they overlap. We could find these links as follows.
 
 ``` r
-pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN', suffix = c('_parent', '_child')) |>
+pairs <- inner_join(toy_apdc, toy_apdc, by = 'PPN',
+                    suffix = c('_parent', '_child'),
+                    relationship = 'many-to-many') |>
   filter(RL_ID_parent != RL_ID_child)
-#> Warning in inner_join(toy_apdc, toy_apdc, by = "PPN", suffix = c("_parent", : Detected an unexpected many-to-many relationship between `x` and `y`.
-#> ℹ Row 1 of `x` matches multiple rows in `y`.
-#> ℹ Row 1 of `y` matches multiple rows in `x`.
-#> ℹ If a many-to-many relationship is expected, set `relationship =
-#>   "many-to-many"` to silence this warning.
 
 links <- pairs |>
   find_links(episode_start_parent <= episode_start_child & episode_start_child <= episode_end_parent) |>
@@ -410,12 +404,7 @@ library(dbplyr)
 #> 
 #>     ident, sql, sql_escape_ident, sql_escape_string
 
-con <- dbConnect(duckdb(), timezone_out = '', tz_out_convert = 'force')
-#> duckdb is storing downloaded extensions and secrets under ~/.duckdb:
-#> ℹ /home/ianpowell/.duckdb
-#> This persists across sessions and is shared with the DuckDB CLI and other clients.
-#> ℹ Run duckdb(shared_home = FALSE) to use a temporary directory instead.
-#> ℹ See ?duckdb_storage for details and alternatives.
+con <- dbConnect(duckdb(shared_home = FALSE), timezone_out = '', tz_out_convert = 'force')
 
 # Tell DuckDB to read the data frame from R; DuckDB can also read Parquet files
 duckdb_register(con, 'toy_apdc', toy_apdc)
