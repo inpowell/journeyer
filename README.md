@@ -5,6 +5,7 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/inpowell/journeyer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/inpowell/journeyer/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of `journeyer` is to provide flexible strategies to follow
@@ -51,6 +52,9 @@ library(data.table)
 #> The following objects are masked from 'package:dplyr':
 #> 
 #>     between, first, last
+#> The following object is masked from 'package:base':
+#> 
+#>     %notin%
 
 library(journeyer)
 
@@ -404,9 +408,14 @@ library(dbplyr)
 #> Attaching package: 'dbplyr'
 #> The following objects are masked from 'package:dplyr':
 #> 
-#>     ident, sql
+#>     ident, sql, sql_escape_ident, sql_escape_string
 
 con <- dbConnect(duckdb(), timezone_out = '', tz_out_convert = 'force')
+#> duckdb is storing downloaded extensions and secrets under ~/.duckdb:
+#> ℹ /home/ianpowell/.duckdb
+#> This persists across sessions and is shared with the DuckDB CLI and other clients.
+#> ℹ Run duckdb(shared_home = FALSE) to use a temporary directory instead.
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 # Tell DuckDB to read the data frame from R; DuckDB can also read Parquet files
 duckdb_register(con, 'toy_apdc', toy_apdc)
